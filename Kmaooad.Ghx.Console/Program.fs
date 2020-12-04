@@ -5,17 +5,19 @@ open FSharp.Control.Tasks.V2.ContextInsensitive
 
 
 let setCodecov namePattern =
-    task {
-        let! repos = GitHubRepos.getAllForOrg "kmaooad" $"^{namePattern}"
+    async {
+        let! repos = GitHubRepos.getAllForOrg "kmaooad" $"^{namePattern}" |> Async.AwaitTask
 
-        repos 
-        |> List.iteri(fun i r  -> 
-                        task {
+        return! repos 
+        |> List.map(fun  r  -> 
+                        async {
                             let! token = Codecov.getUploadToken r.Name
                             do! GitHubRepos.setSecret r.Name "CODECOV_TOKEN" token
-                        } |> Async.AwaitTask |> Async.RunSynchronously
+                            printfn "Set CodeCov for %s" r.Name
+                        } 
                     )
-    } |> Async.AwaitTask |> Async.RunSynchronously
+        |> Async.Parallel
+    } |> Async.RunSynchronously |> ignore
 
 let uploadFile namePattern source dest overwrite =
     task {
