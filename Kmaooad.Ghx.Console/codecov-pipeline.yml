@@ -17,7 +17,7 @@ jobs:
         with:
           dotnet-version: 5.0.100
       - name: Run tests with coverage
-        run: dotnet test /p:AltCover=true /p:AltCoverAssemblyExcludeFilter="?KmaOoad.Coding.202$"
+        run: dotnet test /p:AltCover=true /p:AltCoverAssemblyExcludeFilter="?KmaOoad.Coding.203$"
       - uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
